@@ -73,6 +73,7 @@ public class ticTacToe {
         }
     }
 
+    //Credits to function here: https://www.geeksforgeeks.org/dsa/program-check-input-integer-string/
     public boolean isNum(String str){
         if(str.length() == 0){
             return false;
