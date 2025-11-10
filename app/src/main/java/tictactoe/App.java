@@ -34,7 +34,7 @@ public class App {
                             game.displayBoard();
                         }else{
                             boolean legalMove = game.playMove(num, tile[nextTurn]);
-                            if(game.checkWinner(nextTurn) > -1){
+                            if(game.checkBoard(nextTurn) > -1){
                                 endGame = true;
                                 break;
                             }else{
@@ -58,7 +58,7 @@ public class App {
                     }
                 }
             }
-            if(game.checkWinner(nextTurn) != 2){
+            if(game.checkBoard(nextTurn) != 2){
                 System.out.println("Player " + String.valueOf(tile[nextTurn]) + " is the winner!");
                 points[nextTurn]++;
             }else{
