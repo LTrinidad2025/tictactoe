@@ -1,5 +1,7 @@
 package tictactoe;
 
+import com.google.common.primitives.Chars;
+
 public class ticTacToe {
     private char[][] board;
     public ticTacToe(){
@@ -18,7 +20,8 @@ public class ticTacToe {
         System.out.print("\033[H\033[2J");
         System.out.flush();
         boolean returnVar;
-        if(board[row][col] != 'X' || board[row][col] != 'O'){
+        char space = board[row][col];
+        if(Chars.compare(space, 'X') != 0 && Chars.compare(space, 'O') != 0){
             board[row][col] = tile;
             System.out.println("Player " + String.valueOf(tile) + " made a move at spot " + num + ".");
             returnVar = true;
@@ -59,7 +62,26 @@ public class ticTacToe {
         }else if(board[0][2] == board[1][1] && board[0][2] == board[2][0] && (board[1][1] == 'X' || board[1][1] == 'O')){
             return turn;
         }else{
-            return -1;
+            for(int i = 0; i < board.length; i++){
+                for(int j = 0; j < board[i].length; j++){
+                    if(board[i][j] != 'X' && board[i][j] != 'O'){
+                        return -1;
+                    }
+                }
+            }
+            return 2;
         }
+    }
+
+    public boolean isNum(String str){
+        if(str.length() == 0){
+            return false;
+        }
+        for(int i = 0; i < str.length(); i++){
+            if(!Character.isDigit(str.charAt(i))){
+                return false;
+            }
+        }
+        return true;
     }
 }

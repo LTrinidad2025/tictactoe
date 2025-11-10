@@ -4,6 +4,7 @@
 package tictactoe;
 
 import java.util.Scanner;
+import java.io.*;
 
 public class App {
     public static void main(String[] args) {
@@ -11,41 +12,48 @@ public class App {
         Scanner scan = new Scanner(System.in);
         System.out.print("\033[H\033[2J");
         System.out.flush();
-        int points[] = {0, 0};
+        int points[] = {0, 0, 0}; //First number is player X, second is player O, third is draw count
         char tile[] = {'X', 'O'};
-        int nextTurn = -1;
+        int nextTurn = 0;
         boolean keepPlaying = true;
         boolean endGame = false;
         System.out.println("Let's play Tic-Tac-Toe!\nX's go first.");
         while(keepPlaying){
             while(!endGame){
-                if(nextTurn == 0){
-                    nextTurn = 1;
-                }else{
-                    nextTurn = 0;
-                }
                 game.displayBoard();
                 System.out.println("Pick a number 1 - 9");
                 keepPlaying = false;
-                while(scan.hasNext()){
-                    if(scan.hasNextInt()){
-                        int num = scan.nextInt();
-                        if(num > 10 || num < 0){
+                while(true){
+                    String str = scan.nextLine();
+                    if(game.isNum(str)){
+                        int num = Integer.valueOf(str);
+                        if(num > 9 || num < 1){
                             System.out.print("\033[H\033[2J");
                             System.out.flush();
-                            System.out.println("This number is not between 1 to 9.");
+                            System.out.println("This is not a valid input. Please put in a number from 1 to 9.\nIt's still " + tile[nextTurn] + "'s turn.");
                             game.displayBoard();
                         }else{
-                            game.playMove(num, tile[nextTurn]);
+                            boolean legalMove = game.playMove(num, tile[nextTurn]);
                             if(game.checkWinner(nextTurn) > -1){
                                 endGame = true;
                                 break;
+                            }else{
+                                if(legalMove){
+                                    if(nextTurn == 0){
+                                        nextTurn = 1;
+                                    }else{
+                                        nextTurn = 0;
+                                    }
+                                    System.out.println("It's " + tile[nextTurn] + "'s turn.");
+                                }else{
+                                    System.out.println("It's still " + tile[nextTurn] + "'s turn.");
+                                }
                             }
                         }
                     }else{
                         System.out.print("\033[H\033[2J");
                         System.out.flush();
-                        System.out.println("This is not a valid input. Please put in a number from 1 to 9.");
+                        System.out.println("This is not a valid input. Please put in a number from 1 to 9.\nIt's still " + tile[nextTurn] + "'s turn.");
                         game.displayBoard();
                     }
                 }
@@ -53,20 +61,35 @@ public class App {
             if(game.checkWinner(nextTurn) != 2){
                 System.out.println("Player " + String.valueOf(tile[nextTurn]) + " is the winner!");
                 points[nextTurn]++;
+            }else{
+                System.out.println("Draw!");
+                points[2]++;
             }
+            System.out.println("X games won: " + points[0] + "\nO games won: " + points[1] + "\nDraws made: " + points[2]);
             //A value of 2 means draw
+            System.out.println("Wanna keep playing?");
+            System.out.println("Please pick yes or no.");
             while(scan.hasNext()){
-                    String ans = scan.next();
-                    if(ans.equalsIgnoreCase("yes")){
-                        keepPlaying = true;
-                        break;
-                    }else if(ans.equalsIgnoreCase("no")){
-                        keepPlaying = false;
-                        break;
-                    }else{
-                        System.out.println("Please pick yes or no.");
-                    }
+                String ans = scan.next();
+                if(ans.equalsIgnoreCase("yes")){
+                    keepPlaying = true;
+                    break;
+                }else if(ans.equalsIgnoreCase("no")){
+                    keepPlaying = false;
+                    break;
+                }else{
+                    System.out.println("Please pick yes or no.");
                 }
+            }
+        }
+        try {
+            BufferedWriter scores = new BufferedWriter(new FileWriter("scores.txt"));
+            scores.write("X games won: " + points[0] + "\nO games won: " + points[1] + "\nDraws made: " + points[2]);
+            scores.close();
+            System.out.println("\nCheck scores.txt for points.\nThanks for playing!");
+        } catch (IOException e) {
+            System.out.println("An error has occured");
+            e.printStackTrace();
         }
         scan.close();
     }
